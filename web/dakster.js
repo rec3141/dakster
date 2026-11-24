@@ -1,5 +1,5 @@
 /*
- * dakster.js - client-side port of dakster4a4.cgi (Dakster fragment binner, v4.4, 2008).
+ * dakster.js - Dakster 5.0: client-side port of dakster4a4.cgi (Dakster fragment binner, v4.4, 2008).
  *
  * This file has no DOM dependencies: the web page (index.html) and the node regression
  * test (test/run.js) both load exactly this code.

@@ -15,6 +15,14 @@ simple and is meant as a starting point for manual correction.
 The full instructions are in [`legacy/dakster_manual.txt`](legacy/dakster_manual.txt), and are
 reproduced on the web page.
 
+
+## Versions
+
+- **5.0** (November 2026): runs entirely in the browser (`web/`); nothing is uploaded or stored. Same inputs, options
+  and output files as 4.4, byte for byte, except two documented changes below: `primer.csv` lists samples in a fixed
+  (sorted) order, and primerE sample names containing regex characters are matched exactly instead of losing data.
+- **4.4** (July 2008): the Perl CGI in `legacy/`.
+
 ## Repository layout
 
 | Path | What it is |
