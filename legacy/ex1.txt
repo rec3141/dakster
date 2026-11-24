@@ -1,0 +1,77 @@
+
+DAx 7.2: Comparison sheet; 4/27/2005 3:32:45PM; qualifying on Base pairs with absolute tolerance of 1
+
+Peak	Base pairs	Height	Area Fract. %	Width (s)
+
+1FB7_hpy1:FAM *: Point to point noise (AU): 628.49 (0.91%); RMS Noise (AU): 620.92 (0.90%)				
+1FB1_hpy1:FAM *: Point to point noise (AU): 895.86 (1.32%); RMS Noise (AU): 605.27 (0.89%)				
+1FB2_hpy1:FAM *: Point to point noise (AU): 562.85 (0.80%); RMS Noise (AU): 281.42 (0.40%)				
+1FB4_hpy1:FAM *: Point to point noise (AU): 726.51 (0.98%); RMS Noise (AU): 363.25 (0.49%)				
+1FB5_hpy1:FAM *: Point to point noise (AU): 662.19 (1.46%); RMS Noise (AU): 331.09 (0.73%)				
+1FB6_hpy1:FAM *: Point to point noise (AU): 694.03 (1.19%); RMS Noise (AU): 347.02 (0.59%)				
+1FB8_hpy1:FAM *: Point to point noise (AU): 677.44 (0.94%); RMS Noise (AU): 338.72 (0.47%)				
+				
+1FB7_hpy1:FAM *    1	78.6	31664	22.7%	1.400
+1FB1_hpy1:FAM *    1	78.3	1393.9	1.38%	0.800
+1FB4_hpy1:FAM *    1	78.7	2257.2	2.97%	1.600
+1FB5_hpy1:FAM *    1	78.7	800.99	0.585%	1.200
+1FB6_hpy1:FAM *    1	78.7	1330.6	1.4%	1.300
+				
+1FB7_hpy1:FAM *    2	79.5	60320	55.5%	1.700
+1FB1_hpy1:FAM *    2	79.4	62384	83.5%	3.000
+1FB2_hpy1:FAM *    1	78.9	63104	73.6%	3.400
+1FB4_hpy1:FAM *    2	79.6	62775	79.7%	2.000
+1FB5_hpy1:FAM *    2	79.7	36924	19.5%	1.800
+1FB6_hpy1:FAM *    2	79.6	47550	49.4%	2.200
+1FB8_hpy1:FAM *    1	79.3	62863	75%	4.400
+				
+1FB8_hpy1:FAM *    2	83.0	3998.6	4.95%	1.900
+				
+1FB8_hpy1:FAM *    3	88.3	683.07	1.04%	2.300
+				
+1FB5_hpy1:FAM *    3	133.4	770.71	0.384%	0.800
+				
+1FB1_hpy1:FAM *    3	143.5	237.81	0.167%	0.600
+				
+1FB5_hpy1:FAM *    4	153.2	420.37	0.168%	0.700
+1FB6_hpy1:FAM *    3	153.3	448.6	0.315%	0.600
+				
+1FB5_hpy1:FAM *    5	228.2	386.25	0.149%	0.700
+				
+1FB7_hpy1:FAM *    3	323.5	549.92	0.0677%	0.300
+				
+1FB5_hpy1:FAM *    6	446.0	3663.8	3.51%	1.700
+1FB6_hpy1:FAM *    4	446.0	328.59	0.391%	0.900
+				
+1FB7_hpy1:FAM *    4	448.1	516.42	0.304%	0.900
+1FB4_hpy1:FAM *    3	448.1	1760.7	2.99%	1.600
+1FB5_hpy1:FAM *    7	448.1	18131	19.3%	2.300
+1FB6_hpy1:FAM *    5	448.1	3265.4	5.32%	1.800
+				
+1FB5_hpy1:FAM *    8	472.6	5479.3	6.35%	2.300
+1FB6_hpy1:FAM *    6	472.6	745.04	1.37%	1.400
+				
+1FB5_hpy1:FAM *    9	474.7	6814.6	6.75%	1.700
+				
+1FB5_hpy1:FAM *   10	475.8	2859.4	2.51%	1.100
+				
+1FB5_hpy1:FAM *   11	477.4	6117.7	7.28%	1.800
+1FB6_hpy1:FAM *    7	477.4	1196.8	1.97%	1.400
+				
+1FB7_hpy1:FAM *    5	479.5	650.42	0.508%	1.200
+1FB4_hpy1:FAM *    4	479.6	832	1.52%	1.800
+1FB5_hpy1:FAM *   12	479.5	22547	31.6%	3.700
+1FB6_hpy1:FAM *    8	479.5	7593.3	16.9%	3.300
+				
+1FB5_hpy1:FAM *   13	588.8	1530.4	1.88%	2.200
+1FB6_hpy1:FAM *    9	588.8	993.26	2.02%	1.700
+				
+1FB8_hpy1:FAM *    4	617.7	1669.7	2.11%	2.400
+				
+1FB7_hpy1:FAM *    6	632.7	11918	20.9%	4.500
+1FB1_hpy1:FAM *    4	632.4	6386.2	15%	3.100
+1FB2_hpy1:FAM *    2	632.3	8076.3	26.4%	4.500
+1FB4_hpy1:FAM *    5	632.4	4437.6	12.8%	3.200
+1FB6_hpy1:FAM *   10	632.4	8070.6	20.9%	4.300
+1FB8_hpy1:FAM *    5	632.3	11063	16.9%	4.600
+				

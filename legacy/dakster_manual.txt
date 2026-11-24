@@ -1,0 +1,60 @@
+Dakster is a program for binning and outputting fragment analysis data, e.g. from T-RFLP or ARISA.
+
+This program takes a DAx(R) output file or a tab-delimited spreadsheet with sample name, fragment length, and fragment height (or other parameters) and bins the heights (or other parameters) by fragment length according to a simplistic binning model.  Namely, the first unbinned peak is taken as the lower boundary of the bin and the "bin size" is added to that to get the upper boundary of the bin.  All peaks within those boundaries are placed into that bin, the next unbinned peak is selected and the process is repeated until all peaks are binned.  Yes, it is unsophisticated, so it is generally used as a starting point to which manual corrections are made afterwards.
+
+
+
+INSTRUCTIONS FOR USE WITH SPREADSHEET
+1. Make a 3+ column worksheet with headings, THE FIRST COLUMN _MUST_ BE CALLED "Peak" (including capitalization!) and contain UNIQUE sample names punctuated with a colon at the end.  Other column headings can be anything with normal characters (letters, numbers, spaces...). 
+
+2. The THIRD column will be binned by the numbers in the SECOND column
+
+3. Any additional columns (4--X) will simply be translated into a matrix with Column TWO in the rows and Column ONE in the columns
+
+4. Save the spreadsheet as tab-delimited text only file
+
+5. Copy and paste the necessary columns and headings into dakster (http://staff.washington.edu/rec3141/dakster).  ALL COLUMNS MUST BE SEPARATED BY TABS
+
+Below is a minimal file that should work in dakster:
+
+Peak	basepairs	height
+replicate1:	10	100
+replicate2:	11	110
+replicate1:	12	120
+replicate2:	13	130
+replicate1:	14	140
+replicate2:	15	150
+
+
+
+
+INSTRUCTIONS FOR DAx v 7.x, 8.0
+
+1. Open all the samples you would like to bin in DAx and make sure that peaks have been called.
+2. Go to Analysis-->Global Sheet  (NOT BINNING SHEET)
+3. Choose which traces you want to analyze (e.g. only sample traces, not ladder traces)
+4. Choose "Base pairs" as peak qualification
+5. Choose OK (no need to set tolerance)
+6. Go to View-->Attributes
+7. Select which data columns you would like to create matrices from.
+<<< NOTE: the first attribute must be the sample name, the second attribute should be the length of the fragment, the third attribute is the one that will be binned -- usually this will be the peak height.  Any other attributes -- even blank ones -- will output a matrix file of ALL fragment lengths (NOT binned fragment lengths) versus all samples.  If you want a binned version of one of these attributes move it to the third column and re-run dakster.>>>
+8. Go to File-->Export and save the global sheet to a file on your computer.
+9. Open the file in a basic text editor such as Notepad and copy all of the text (usually Control-A Control-C will do this) to the clipboard
+10. Go to the dakster web site
+11. Paste (Control-V) the text into the data box
+12. Choose whether you want flat or scaled bins and the specific manner you want the peaks binned and click Submit.
+
+
+
+Version 4 implements another possibility for binning, which is binning using primerE.  By making a distance matrix of the fragment lengths for every sample, lengths can be clustered and the clusters act like bins.
+To use this feature, follow the following steps:
+1. run your global binning sheet as normal in dakster
+2. there is a new output file called 'primer', open it in primerE (with following options: tab-delimited, no title, SAMPLES IN ROWS)
+3. make a resemblance matrix using 'More' and choose a distance method on 'More' tab, like 'D2 average distance'
+4. make a cluster diagram (CLUSTER). right-click and choose 'Special' features.  enter your target bin size in the 'slicing' box under 'slicing' category and click 'create factor'
+5. the factor name MUST BEGIN WITH the word 'bins' as written (lowercase, no spaces or funny characters), a good example name for a 2bp cutoff is 'bins2bp'
+6. you can make as many slices/bin sizes as you want by repeating steps 4 and 5.
+7. when you are done, click on the original sheet in the explorer bar and click 'File-->Save Data as' and save it as a text file.
+8. open the file in a plain text word processor (e.g. Notepad) and type 'primerE' (again as written including uppercase 'E') on a blank line at the beginning, save it, and copy the whole thing to the clipboard
+9. go back to dakster and paste the spreadsheet into the box and run it!  it should output a set of files for each bin size and each trait in the original global binning sheet
+

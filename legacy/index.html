@@ -1,0 +1,57 @@
+<?php include("header_doctype.txt");?>
+<html>
+<head>
+
+<title>Dakster</title>
+
+<div id="formDiv">
+
+<h3>Fragment Binner Online<h3>
+version 4.4 (03 July 2008)
+<br>
+by Eric Collins
+<h4><a href="dakster_manual.txt">Read the Manual (work in progress)</a></h4>
+
+<form action="./dakster4a4.cgi" method="post" name="dataform" method="post">
+<p>Paste your DAx Global Binning Sheet, Tab-delimited Spreadsheet, or PrimerE output file here:<br><TEXTAREA NAME="globalsheet" COLS=60 ROWS=10></TEXTAREA>
+<br><em>Bin Size</em>: <input type="text" name="binsize" size=4 maxlength=4 value="2">: base size of bins
+<br><em>Bin Slope</em>: <input type="text" name="binslope" size=6 maxlength=6 value="0">: slope of 
+bin size (0.01 works ok for linear scaling)
+
+
+<br><br>
+Select how you would like to deal with multiple peaks in the same bin:<br>
+<select name="multiplepeaks">
+<option value="concatenate" SELECTED>Concatenate them (e.g. 100+111)</option>
+
+<option value="add">Add them together (e.g. 211)</option>
+<option value="keeplarge">Keep only largest (e.g. 111)</option>
+</select>
+
+<p><input type="submit" name="form_done" value="Submit Form">
+
+</form>
+
+</div>
+<p>This program takes a DAx(R) output file or a tab-delimited spreadsheet with sample name, fragment length, and fragment height (or other parameters) and bins the heights (or other parameters) by fragment length according to a simplistic binning model.  Namely, the first unbinned peak is taken as the lower boundary of the bin and the "bin size" is added to that to get the upper boundary of the bin.  All peaks within those boundaries are placed into that bin, the next unbinned peak is selected and the process is repeated until all peaks are binned.  Yes, it is unsophisticated, so it is generally used as a starting point to which manual corrections are made afterwards.
+
+<p><b>Version 4</b> implements another possibility for binning, which is binning using primerE.  By making a distance matrix of the fragment lengths for every sample, lengths can be clustered and the clusters act like bins.
+<p>To use this feature, follow the following steps:
+<br>1. run your global binning sheet as normal in dakster
+
+<br>2. there is a new output file called 'primer', open it in primerE (with following options: tab-delimited, no title, SAMPLES IN ROWS)
+<br>3. make a resemblance matrix using 'More' and choose a distance method on 'More' tab, like 'D2 average distance'
+<br>4. make a cluster diagram (CLUSTER). right-click and choose 'Special' features.  enter your target bin size in the 'slicing' box under 'slicing' category and click 'create factor'
+<br>5. the factor name MUST BEGIN WITH the word 'bins' as written (lowercase, no spaces or funny characters), a good example name for a 2bp cutoff is 'bins2bp'
+<br>6. you can make as many slices/bin sizes as you want by repeating steps 4 and 5.
+<br>7. when you are done, click on the original sheet in the explorer bar and click 'File-->Save Data as' and save it as a text file.
+<br>8. open the file in a plain text word processor (e.g. Notepad) and type 'primerE' (again as written including uppercase 'E') on a blank line at the beginning, save it, and copy the whole thing to the clipboard
+<br>9. go back to dakster and paste the spreadsheet into the box and run it!  it should output a set of files for each bin size and each trait in the original global binning sheet
+
+<br><br><a href="ex1.txt">Here is an example input file</a>
+
+
+<br><br>
+for comments or questions email me: rec3141.at.gmail.com (replace .at. with @)
+</body>
+</html>
