@@ -1,0 +1,7 @@
+Peak	basepairs	height
+replicate1:	10	100
+replicate2:	11	110
+replicate1:	12	120
+replicate2:	13	130
+replicate1:	14	140
+replicate2:	15	150

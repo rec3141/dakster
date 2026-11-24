@@ -1,0 +1,22 @@
+
+DAx-like export, but this first line does not start with it
+   
+			
+Peak	Base pairs	Height	Area Fract. %	Width (s)	Size/bp	it's
+S1:FAM *: Point to point noise (AU): 628.49 (0.91%); RMS Noise (AU): 620.92 (0.90%)				
+
+S1:FAM *    1	78.6	31664	22.7%	1.400	9	x
+S2:FAM *    1	78.3	1393.9	1.38%
+S3:FAM *    1	78.7	2257.2	2.97%	1.600	8	y	extra	more
+S4 no colon here	79.0	500	1%	1	1	1
+S5: colon but no tab
+S2:FAM *    2	83.0	3998.6		1.900		z
+	
+S3:FAM *    2	88.3	0	0%	0	0	0
+S1:FAM *    2	88.9	683.07	1.04%	2.300	7	w
+S4:FAM *    1	133.4	770.71
+S2:FAM *    3	153.2	420.37	0.168%	0.700	6	v
+speakerS6:a	160	NewHeight	NewArea
+S6:b	161	5	6
+S1:c	161.5	7	8
+S7:d	400	9	10

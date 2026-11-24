@@ -1,0 +1,8 @@
+  primerE export  
+
+	peak		sample	Height	xbins	bins3bp	Other
+A-100	100		A	10	q	k1	o
+B-101	101		B	20	r	k1	o
+A-102	102		A	30	s	k1	o
+C-150	150		C	40	t	k2	o
+A-151.5	151.5		A	50	u	k2	o

@@ -1,0 +1,6 @@
+primerE
+	peak		sample	Height	bins2bp
+S(1)-60	60		S(1)	10	a
+S+2-60.5	60.5		S+2	20	a
+S.3-61	61		S.3	30	a
+Plain-61	61		Plain	40	a

@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dakster fragment binner</title>
+<meta name="description" content="Dakster bins T-RFLP / ARISA fragment analysis peak tables (DAx global sheets, tab-delimited spreadsheets, primerE output). Runs entirely in your browser.">
+<style>
+  :root {
+    --ink: #14232c; --ink-soft: #3f5560; --muted: #6a7c86; --line: #dde6ea;
+    --paper: #ffffff; --paper-2: #f4f8fa; --accent: #1f7fb0; --cyan: #2b8cbe; --warn: #8a5a00; --warn-bg: #fff6e0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #e8f1f5; --ink-soft: #bcccd4; --muted: #8ba0aa; --line: #25404e;
+      --paper: #0c1a22; --paper-2: #102631; --accent: #5cb4dd; --cyan: #5cb4dd; --warn: #ffd27a; --warn-bg: #2e2510;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 600; font-size: 2rem; margin: 0 0 4px; }
+  h2 { font-size: 1.2rem; margin: 32px 0 8px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  a { color: var(--accent); }
+  .privacy { background: var(--paper-2); border: 1px solid var(--line); border-left: 4px solid var(--cyan);
+    padding: 10px 14px; border-radius: 6px; margin: 0 0 24px; }
+  label { font-weight: 600; }
+  textarea { width: 100%; min-height: 200px; font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 8px; tab-size: 8; }
+  input[type=text], select { font: inherit; background: var(--paper); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 4px; padding: 4px 6px; }
+  input[type=text] { width: 6em; }
+  .row { margin: 12px 0; }
+  .hint { color: var(--muted); font-size: .92rem; }
+  .filebox { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+  button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent);
+    color: #fff; cursor: pointer; }
+  button.secondary { background: transparent; color: var(--accent); }
+  button:disabled { opacity: .5; cursor: default; }
+  #results { margin-top: 28px; }
+  .log { background: var(--paper-2); border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px;
+    font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-x: auto; }
+  .warn { background: var(--warn-bg); color: var(--warn); border-radius: 6px; padding: 8px 12px; margin: 8px 0; }
+  .err { color: #c0392b; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  td, th { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.size { color: var(--muted); white-space: nowrap; text-align: right; }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+  details { border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; margin: 12px 0; }
+  details summary { cursor: pointer; font-weight: 600; }
+  pre.manual { white-space: pre-wrap; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  footer { color: var(--muted); font-size: .9rem; margin-top: 40px; border-top: 1px solid var(--line); padding-top: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Dakster</h1>
+  <p class="sub">Fragment binner, version 4.4 (03 July 2008) by Eric Collins &middot; browser version</p>
+
+  <p class="privacy"><strong>Your data never leaves your browser.</strong> This page reads your file, bins the peaks and builds
+    the output files on your own computer, in JavaScript. Nothing is uploaded or stored anywhere.</p>
+
+  <p>Dakster takes a DAx&reg; output file or a tab-delimited spreadsheet with sample name, fragment length and fragment
+    height (or other parameters), and bins the heights (or other parameters) by fragment length. It can also turn a
+    primerE cluster export into binned tables. See the <a href="#manual">manual</a> below.</p>
+
+  <form id="form" autocomplete="off">
+    <div class="row">
+      <label for="globalsheet">Paste your DAx Global Binning Sheet, Tab-delimited Spreadsheet, or PrimerE output file here:</label>
+      <textarea id="globalsheet" name="globalsheet" spellcheck="false" wrap="off"></textarea>
+      <div class="filebox">
+        <span class="hint">or open a file:</span>
+        <input type="file" id="file" accept=".txt,.tsv,.csv,text/plain">
+        <button type="button" class="secondary" id="clearfile" hidden>Use the text box instead</button>
+        <button type="button" class="secondary" id="example">Load example input</button>
+      </div>
+      <div class="hint" id="fileinfo"></div>
+    </div>
+    <div class="row">
+      <label for="binsize">Bin Size</label>: <input type="text" id="binsize" name="binsize" maxlength="4" value="2">
+      <span class="hint">base size of bins</span>
+    </div>
+    <div class="row">
+      <label for="binslope">Bin Slope</label>: <input type="text" id="binslope" name="binslope" maxlength="6" value="0">
+      <span class="hint">slope of bin size (0.01 works ok for linear scaling)</span>
+    </div>
+    <div class="row">
+      <label for="multiplepeaks">Select how you would like to deal with multiple peaks in the same bin:</label><br>
+      <select id="multiplepeaks" name="multiplepeaks">
+        <option value="concatenate" selected>Concatenate them (e.g. 100+111)</option>
+        <option value="add">Add them together (e.g. 211)</option>
+        <option value="keeplarge">Keep only largest (e.g. 111)</option>
+      </select>
+    </div>
+    <div class="row"><button type="submit" id="submit">Bin peaks</button></div>
+  </form>
+
+  <section id="results" hidden>
+    <h2>Results</h2>
+    <div id="warnings"></div>
+    <div class="log" id="log"></div>
+    <table id="filetable"><thead><tr><th>File</th><th>Contents</th><th></th></tr></thead><tbody></tbody></table>
+    <button type="button" id="zip">Download all files (.zip)</button>
+    <span class="hint" id="zipname"></span>
+  </section>
+
+  <h2 id="about">How binning works</h2>
+  <p>The first unbinned peak is taken as the lower boundary of the bin and the &ldquo;bin size&rdquo; is added to that to
+    get the upper boundary of the bin. All peaks within those boundaries are placed into that bin, the next unbinned
+    peak is selected and the process is repeated until all peaks are binned. With a bin slope, the bin width grows
+    with fragment length: <span class="mono">width = slope &times; length + bin size</span>. Yes, it is unsophisticated, so
+    it is generally used as a starting point to which manual corrections are made afterwards.</p>
+  <p><b>Version 4</b> adds binning with primerE: by making a distance matrix of the fragment lengths for every sample,
+    lengths can be clustered and the clusters act like bins (steps in the manual below).</p>
+
+  <h2>Output files</h2>
+  <p>The output files have the same names and contents as the original web service produced. They are tab-separated text,
+    even though they are named <code>.csv</code>.</p>
+  <ul>
+    <li><code>binned.csv</code>: the third input column (usually peak height), binned, bins &times; samples.</li>
+    <li><code>presence.csv</code>: presence/absence (1/0) matrix of the binned peaks.</li>
+    <li><code>phylip.csv</code>: the presence/absence matrix transposed into a PHYLIP infile.</li>
+    <li>one file per data column (e.g. <code>Height.csv</code>, <code>AreaFract.csv</code>): every peak length &times;
+      samples, not binned. Column names lose spaces, <code>% ( ) . \ / '</code> characters.</li>
+    <li><code>distance.csv</code>: an empty placeholder (all peaks &times; samples), kept for compatibility.</li>
+    <li><code>primer.csv</code>: input for primerE to do distance-matrix binning.</li>
+    <li>primerE input gives <code>primer-&lt;binfactor&gt;-&lt;trait&gt;.csv</code>, one per bin factor and trait;
+      the first column is the average fragment length in the bin.</li>
+  </ul>
+  <p class="hint">As in the original, a value of exactly <code>0</code> is written as an empty cell in <code>binned.csv</code> and the
+    per-column files, and counts as absent in <code>presence.csv</code>.</p>
+
+  <details id="manual">
+    <summary>Manual (dakster_manual.txt)</summary>
+    <pre class="manual" id="manualtext">Dakster is a program for binning and outputting fragment analysis data, e.g. from T-RFLP or ARISA.
+
+This program takes a DAx(R) output file or a tab-delimited spreadsheet with sample name, fragment length, and fragment height (or other parameters) and bins the heights (or other parameters) by fragment length according to a simplistic binning model.  Namely, the first unbinned peak is taken as the lower boundary of the bin and the "bin size" is added to that to get the upper boundary of the bin.  All peaks within those boundaries are placed into that bin, the next unbinned peak is selected and the process is repeated until all peaks are binned.  Yes, it is unsophisticated, so it is generally used as a starting point to which manual corrections are made afterwards.
+
+
+
+INSTRUCTIONS FOR USE WITH SPREADSHEET
+1. Make a 3+ column worksheet with headings, THE FIRST COLUMN _MUST_ BE CALLED "Peak" (including capitalization!) and contain UNIQUE sample names punctuated with a colon at the end.  Other column headings can be anything with normal characters (letters, numbers, spaces...). 
+
+2. The THIRD column will be binned by the numbers in the SECOND column
+
+3. Any additional columns (4--X) will simply be translated into a matrix with Column TWO in the rows and Column ONE in the columns
+
+4. Save the spreadsheet as tab-delimited text only file
+
+5. Copy and paste the necessary columns and headings into dakster (http://staff.washington.edu/rec3141/dakster).  ALL COLUMNS MUST BE SEPARATED BY TABS
+
+Below is a minimal file that should work in dakster:
+
+Peak	basepairs	height
+replicate1:	10	100
+replicate2:	11	110
+replicate1:	12	120
+replicate2:	13	130
+replicate1:	14	140
+replicate2:	15	150
+
+
+
+
+INSTRUCTIONS FOR DAx v 7.x, 8.0
+
+1. Open all the samples you would like to bin in DAx and make sure that peaks have been called.
+2. Go to Analysis--&gt;Global Sheet  (NOT BINNING SHEET)
+3. Choose which traces you want to analyze (e.g. only sample traces, not ladder traces)
+4. Choose "Base pairs" as peak qualification
+5. Choose OK (no need to set tolerance)
+6. Go to View--&gt;Attributes
+7. Select which data columns you would like to create matrices from.
+&lt;&lt;&lt; NOTE: the first attribute must be the sample name, the second attribute should be the length of the fragment, the third attribute is the one that will be binned -- usually this will be the peak height.  Any other attributes -- even blank ones -- will output a matrix file of ALL fragment lengths (NOT binned fragment lengths) versus all samples.  If you want a binned version of one of these attributes move it to the third column and re-run dakster.&gt;&gt;&gt;
+8. Go to File--&gt;Export and save the global sheet to a file on your computer.
+9. Open the file in a basic text editor such as Notepad and copy all of the text (usually Control-A Control-C will do this) to the clipboard
+10. Go to the dakster web site
+11. Paste (Control-V) the text into the data box
+12. Choose whether you want flat or scaled bins and the specific manner you want the peaks binned and click Submit.
+
+
+
+Version 4 implements another possibility for binning, which is binning using primerE.  By making a distance matrix of the fragment lengths for every sample, lengths can be clustered and the clusters act like bins.
+To use this feature, follow the following steps:
+1. run your global binning sheet as normal in dakster
+2. there is a new output file called 'primer', open it in primerE (with following options: tab-delimited, no title, SAMPLES IN ROWS)
+3. make a resemblance matrix using 'More' and choose a distance method on 'More' tab, like 'D2 average distance'
+4. make a cluster diagram (CLUSTER). right-click and choose 'Special' features.  enter your target bin size in the 'slicing' box under 'slicing' category and click 'create factor'
+5. the factor name MUST BEGIN WITH the word 'bins' as written (lowercase, no spaces or funny characters), a good example name for a 2bp cutoff is 'bins2bp'
+6. you can make as many slices/bin sizes as you want by repeating steps 4 and 5.
+7. when you are done, click on the original sheet in the explorer bar and click 'File--&gt;Save Data as' and save it as a text file.
+8. open the file in a plain text word processor (e.g. Notepad) and type 'primerE' (again as written including uppercase 'E') on a blank line at the beginning, save it, and copy the whole thing to the clipboard
+9. go back to dakster and paste the spreadsheet into the box and run it!  it should output a set of files for each bin size and each trait in the original global binning sheet
+
+</pre>
+    <p class="hint">In this browser version you can also open the exported file directly instead of copying and pasting it.
+      The old address in step 5 is no longer in use.</p>
+  </details>
+
+  <footer>
+    Dakster 4.4 &copy; Eric Collins. Browser port of the original Perl CGI, producing byte-identical output files.
+    Source, tests and the original CGI: <a href="https://github.com/rec3141/dakster">github.com/rec3141/dakster</a>.
+  </footer>
+</main>
+
+<script type="text/plain" id="ex1">
+DAx 7.2: Comparison sheet; 4/27/2005 3:32:45PM; qualifying on Base pairs with absolute tolerance of 1
+
+Peak	Base pairs	Height	Area Fract. %	Width (s)
+
+1FB7_hpy1:FAM *: Point to point noise (AU): 628.49 (0.91%); RMS Noise (AU): 620.92 (0.90%)				
+1FB1_hpy1:FAM *: Point to point noise (AU): 895.86 (1.32%); RMS Noise (AU): 605.27 (0.89%)				
+1FB2_hpy1:FAM *: Point to point noise (AU): 562.85 (0.80%); RMS Noise (AU): 281.42 (0.40%)				
+1FB4_hpy1:FAM *: Point to point noise (AU): 726.51 (0.98%); RMS Noise (AU): 363.25 (0.49%)				
+1FB5_hpy1:FAM *: Point to point noise (AU): 662.19 (1.46%); RMS Noise (AU): 331.09 (0.73%)				
+1FB6_hpy1:FAM *: Point to point noise (AU): 694.03 (1.19%); RMS Noise (AU): 347.02 (0.59%)				
+1FB8_hpy1:FAM *: Point to point noise (AU): 677.44 (0.94%); RMS Noise (AU): 338.72 (0.47%)				
+				
+1FB7_hpy1:FAM *    1	78.6	31664	22.7%	1.400
+1FB1_hpy1:FAM *    1	78.3	1393.9	1.38%	0.800
+1FB4_hpy1:FAM *    1	78.7	2257.2	2.97%	1.600
+1FB5_hpy1:FAM *    1	78.7	800.99	0.585%	1.200
+1FB6_hpy1:FAM *    1	78.7	1330.6	1.4%	1.300
+				
+1FB7_hpy1:FAM *    2	79.5	60320	55.5%	1.700
+1FB1_hpy1:FAM *    2	79.4	62384	83.5%	3.000
+1FB2_hpy1:FAM *    1	78.9	63104	73.6%	3.400
+1FB4_hpy1:FAM *    2	79.6	62775	79.7%	2.000
+1FB5_hpy1:FAM *    2	79.7	36924	19.5%	1.800
+1FB6_hpy1:FAM *    2	79.6	47550	49.4%	2.200
+1FB8_hpy1:FAM *    1	79.3	62863	75%	4.400
+				
+1FB8_hpy1:FAM *    2	83.0	3998.6	4.95%	1.900
+				
+1FB8_hpy1:FAM *    3	88.3	683.07	1.04%	2.300
+				
+1FB5_hpy1:FAM *    3	133.4	770.71	0.384%	0.800
+				
+1FB1_hpy1:FAM *    3	143.5	237.81	0.167%	0.600
+				
+1FB5_hpy1:FAM *    4	153.2	420.37	0.168%	0.700
+1FB6_hpy1:FAM *    3	153.3	448.6	0.315%	0.600
+				
+1FB5_hpy1:FAM *    5	228.2	386.25	0.149%	0.700
+				
+1FB7_hpy1:FAM *    3	323.5	549.92	0.0677%	0.300
+				
+1FB5_hpy1:FAM *    6	446.0	3663.8	3.51%	1.700
+1FB6_hpy1:FAM *    4	446.0	328.59	0.391%	0.900
+				
+1FB7_hpy1:FAM *    4	448.1	516.42	0.304%	0.900
+1FB4_hpy1:FAM *    3	448.1	1760.7	2.99%	1.600
+1FB5_hpy1:FAM *    7	448.1	18131	19.3%	2.300
+1FB6_hpy1:FAM *    5	448.1	3265.4	5.32%	1.800
+				
+1FB5_hpy1:FAM *    8	472.6	5479.3	6.35%	2.300
+1FB6_hpy1:FAM *    6	472.6	745.04	1.37%	1.400
+				
+1FB5_hpy1:FAM *    9	474.7	6814.6	6.75%	1.700
+				
+1FB5_hpy1:FAM *   10	475.8	2859.4	2.51%	1.100
+				
+1FB5_hpy1:FAM *   11	477.4	6117.7	7.28%	1.800
+1FB6_hpy1:FAM *    7	477.4	1196.8	1.97%	1.400
+				
+1FB7_hpy1:FAM *    5	479.5	650.42	0.508%	1.200
+1FB4_hpy1:FAM *    4	479.6	832	1.52%	1.800
+1FB5_hpy1:FAM *   12	479.5	22547	31.6%	3.700
+1FB6_hpy1:FAM *    8	479.5	7593.3	16.9%	3.300
+				
+1FB5_hpy1:FAM *   13	588.8	1530.4	1.88%	2.200
+1FB6_hpy1:FAM *    9	588.8	993.26	2.02%	1.700
+				
+1FB8_hpy1:FAM *    4	617.7	1669.7	2.11%	2.400
+				
+1FB7_hpy1:FAM *    6	632.7	11918	20.9%	4.500
+1FB1_hpy1:FAM *    4	632.4	6386.2	15%	3.100
+1FB2_hpy1:FAM *    2	632.3	8076.3	26.4%	4.500
+1FB4_hpy1:FAM *    5	632.4	4437.6	12.8%	3.200
+1FB6_hpy1:FAM *   10	632.4	8070.6	20.9%	4.300
+1FB8_hpy1:FAM *    5	632.3	11063	16.9%	4.600
+				
+</script>
+<script src="dakster.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var fileBytes = null, fileName = '';
+  var current = null; // { files, folder, date }
+  var urls = [];
+
+  function utf8Bin(text) { return Dakster.bytesToBin(new TextEncoder().encode(text)); }
+  function textOfBin(bin) { return new TextDecoder('utf-8').decode(Dakster.binToBytes(bin)); }
+  function setFile(bin, name) {
+    fileBytes = bin; fileName = name;
+    $('globalsheet').disabled = bin !== null;
+    $('clearfile').hidden = bin === null;
+    $('fileinfo').textContent = bin === null ? '' : 'Using ' + name + ' (' + bin.length.toLocaleString() + ' bytes).';
+  }
+  $('file').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    if (!f) { setFile(null, ''); return; }
+    f.arrayBuffer().then(function (buf) { setFile(Dakster.bytesToBin(new Uint8Array(buf)), f.name); });
+  });
+  $('clearfile').addEventListener('click', function () { $('file').value = ''; setFile(null, ''); });
+  $('example').addEventListener('click', function () {
+    $('file').value = ''; setFile(null, '');
+    // the example file starts with an empty line; the <script> element supplies it after its opening tag
+    $('globalsheet').value = $('ex1').textContent;
+  });
+
+  function describe(name, col0) {
+    var m;
+    if (name === 'primer.csv') return 'input for primer to do distance matrix binning';
+    if (name === 'binned.csv') return 'binned ' + col0;
+    if (name === 'presence.csv') return col0 + ' presence/absence matrix';
+    if (name === 'phylip.csv') return 'binned ' + col0 + ' => phylip infile';
+    if ((m = /^primer-(.*)\.csv$/.exec(name))) return 'output from primer distance matrix binning (' + m[1] + ')';
+    return 'all peak ' + name.replace(/\.csv$/, '');
+  }
+  function download(name, bytes, type) {
+    var url = URL.createObjectURL(new Blob([bytes], { type: type }));
+    urls.push(url);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    urls.forEach(URL.revokeObjectURL); urls = [];
+    var input = fileBytes !== null ? fileBytes : utf8Bin($('globalsheet').value);
+    var opts = { binsize: $('binsize').value, binslope: $('binslope').value, multiplepeaks: $('multiplepeaks').value };
+    var res, date = new Date();
+    $('warnings').innerHTML = '';
+    $('results').hidden = false;
+    try {
+      res = Dakster.run(input, opts);
+    } catch (e) {
+      $('log').innerHTML = '<span class="err"></span>';
+      $('log').firstChild.textContent = 'Error: ' + e.message;
+      $('filetable').tBodies[0].innerHTML = '';
+      $('zip').disabled = true;
+      return;
+    }
+    var folder = Dakster.folderName(date);
+    current = { files: res.files, folder: folder, date: date };
+    $('log').textContent = textOfBin(res.log.join('\n'));
+    res.warnings.forEach(function (w) {
+      var d = document.createElement('div'); d.className = 'warn'; d.textContent = textOfBin(w); $('warnings').appendChild(d);
+    });
+    var col0 = textOfBin(res.colnames[0] || '');
+    var tb = $('filetable').tBodies[0];
+    tb.innerHTML = '';
+    res.files.forEach(function (f) {
+      var tr = document.createElement('tr');
+      var shown = textOfBin(f.name);
+      tr.innerHTML = '<td class="mono"></td><td></td><td class="size"></td>';
+      tr.children[0].textContent = shown;
+      tr.children[1].textContent = describe(shown, col0);
+      var a = document.createElement('a');
+      a.href = '#'; a.textContent = 'download';
+      a.addEventListener('click', function (e) { e.preventDefault(); download(shown, Dakster.binToBytes(f.content), 'text/plain'); });
+      tr.children[2].appendChild(document.createTextNode(f.content.length.toLocaleString() + ' bytes · '));
+      tr.children[2].appendChild(a);
+      tb.appendChild(tr);
+    });
+    $('zip').disabled = res.files.length === 0;
+    $('zipname').textContent = res.files.length ? folder + '.zip' : 'no output files';
+    $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  $('zip').addEventListener('click', function () {
+    if (!current) return;
+    var dir = current.folder + '/';
+    var entries = [{ name: dir, data: new Uint8Array(0) }].concat(current.files.map(function (f) {
+      return { name: dir + f.name, data: Dakster.binToBytes(f.content) };
+    }));
+    download(current.folder + '.zip', Dakster.makeZip(entries, current.date), 'application/zip');
+  });
+})();
+</script>
+</body>
+</html>
